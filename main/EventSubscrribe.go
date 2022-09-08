@@ -23,23 +23,10 @@ func main() {
 	}
 
 	contractAddress := common.HexToAddress("0x7b053eaca2d793502157c6b20cee29f3c4fdb9ab")
-	//query := ethereum.FilterQuery{
-	//	Addresses: []common.Address{contractAddress},
-	//}
 
-	//headers := make(chan *types.Header)
-	//sub, err := client.SubscribeNewHead(context.Background(), headers)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
 	var lastReadBlock = int64(11257)
 
 	for {
-
-		//block, err := client.BlockByHash(context.Background(), header.Hash())
-		//if err != nil {
-		//	log.Fatal(err)
-		//}
 
 		headerByNumber, err := client.HeaderByNumber(context.Background(), nil)
 		if err != nil {
@@ -74,12 +61,6 @@ func main() {
 		logTransferSigHash := crypto.Keccak256Hash(logTransferSig)
 
 		for _, vLog := range logs {
-
-			err, _ := contractAbi.Unpack("Transfer", vLog.Data)
-			if err != nil {
-				log.Fatal(err)
-			}
-
 			switch vLog.Topics[0].Hex() {
 			case logTransferSigHash.Hex():
 				fmt.Printf("Log Name: Transfer\n")
@@ -98,7 +79,6 @@ func main() {
 				fmt.Printf("Hex TokenId: %s\n", vLog.Topics[3].Big())
 			}
 		}
-		//lastReadBlock = block.Number().Int64()
 		lastReadBlock = headerByNumber.Number.Int64()
 
 		time.Sleep(4 * time.Minute)
