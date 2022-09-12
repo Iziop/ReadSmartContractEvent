@@ -16,6 +16,17 @@ import (
 
 var contractAbi = `[{"inputs":[{"internalType":"string","name":"initMessage","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"oldStr","type":"string"},{"indexed":false,"internalType":"string","name":"newStr","type":"string"}],"name":"UpdatedMessages","type":"event"},{"inputs":[],"name":"message","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"newMessage","type":"string"}],"name":"update","outputs":[],"stateMutability":"nonpayable","type":"function"}]`
 
+func findAndDelete(s []*big.Int, item *big.Int) []*big.Int {
+	index := 0
+	for _, i := range s {
+		if i.Cmp(item) != 0 {
+			s[index] = i
+			index++
+		}
+	}
+	return s[:index]
+}
+
 func main() {
 	client, err := ethclient.Dial("wss://eth-rinkeby.alchemyapi.io/v2/V2pb1iVDvO15kJiisJoWLfJdi8mLWUFq")
 	if err != nil {
@@ -25,6 +36,8 @@ func main() {
 	contractAddress := common.HexToAddress("0x7b053eaca2d793502157c6b20cee29f3c4fdb9ab")
 
 	var lastReadBlock = int64(11257)
+
+	var m = make(map[string][]*big.Int)
 
 	for {
 
@@ -77,11 +90,18 @@ func main() {
 				fmt.Printf("From: %s\n", transferEvent.From.Hex())
 				fmt.Printf("To: %s\n", transferEvent.To.Hex())
 				fmt.Printf("Hex TokenId: %s\n", vLog.Topics[3].Big())
+
+				if transferEvent.From.Hex() == "0x0000000000000000000000000000000000000000" {
+					m[transferEvent.To.Hex()] = append(m[transferEvent.To.Hex()], vLog.Topics[3].Big())
+				} else {
+					m[transferEvent.From.Hex()] = findAndDelete(m[transferEvent.From.Hex()], vLog.Topics[3].Big())
+					m[transferEvent.To.Hex()] = append(m[transferEvent.To.Hex()], vLog.Topics[3].Big())
+				}
 			}
 		}
 		lastReadBlock = headerByNumber.Number.Int64()
-
-		time.Sleep(4 * time.Minute)
+		fmt.Println("map:", m)
+		time.Sleep(5 * time.Minute)
 	}
 
 }
