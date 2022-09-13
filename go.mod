@@ -1,4 +1,4 @@
-module catchEventViaInfura
+module github.com/AllFi/gamelab-contracts
 
 go 1.17
 
