@@ -22,7 +22,7 @@ type EventsFetcher struct {
 }
 
 func NewEventsFetcher(rpcUrl string, contractAddressHex string) (*EventsFetcher, error) {
-	client, err := ethclient.Dial("wss://eth-rinkeby.alchemyapi.io/v2/V2pb1iVDvO15kJiisJoWLfJdi8mLWUFq")
+	client, err := ethclient.Dial(rpcUrl)
 	if err != nil {
 		return nil, err
 	}
