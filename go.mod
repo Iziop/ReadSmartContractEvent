@@ -1,4 +1,4 @@
-module catchEventViaInfura
+module github.com/Iziop/ReadSmartContractEvent
 
 go 1.17
 
