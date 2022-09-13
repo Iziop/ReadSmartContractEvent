@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AllFi/gamelab-contracts/contract"
+	"github.com/Iziop/ReadSmartContractEvent/contract"
 	"github.com/ethereum/go-ethereum/common"
 )
 
